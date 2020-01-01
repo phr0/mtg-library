@@ -19,7 +19,7 @@ export type Deck = {
 
 export interface IUserData {
   library: CardCollection;
-  decks: CardCollection[];
+  decks: Deck[];
   wishlist: CardCollection;
 }
 

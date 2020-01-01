@@ -8,19 +8,11 @@ import {
 import { useAsyncData } from "../useAsyncData";
 import { Suspense } from "../../components/suspense";
 import { Card } from "scryfall-sdk";
-
-type UserDataAction = UserDataSetAction | UserDataAddCardToLibraryAction;
-type UserDataSetAction = {
-  type: "set";
-  userData: IUserData;
-};
-type UserDataAddCardToLibraryAction = {
-  type: "addCardToLibrary";
-  card: Card;
-};
+import { setUserDataState, addCardToLibrary, addDeck } from "./actions";
+import { UserDataAction } from "./actionTypes";
 
 type UserDataDispatch = (action: UserDataAction) => void;
-type UserDataState = IUserData;
+export type UserDataState = IUserData;
 type UserDataProviderProps = {
   children: React.ReactNode;
 };
@@ -29,31 +21,17 @@ const UserDataDispatchContext = React.createContext<
   UserDataDispatch | undefined
 >(undefined);
 
-const stateMustBeDefinedError = new Error("State must be defined");
-
-function addCardToCollection(card: Card, collection: CardCollection) {
-  const cardAlreadyExistingInLibrary = collection[card.id];
-  if (cardAlreadyExistingInLibrary) {
-    cardAlreadyExistingInLibrary.quantity++;
-    return { ...collection };
-  }
-  collection[card.id] = { ...card, quantity: 1 };
-  return { ...collection };
-}
-
 function userDataReducer(
   state: UserDataState | null,
   action: UserDataAction
 ): IUserData | null {
   switch (action.type) {
     case "set":
-      return action.userData;
+      return setUserDataState(state, action);
     case "addCardToLibrary":
-      if (!state) throw stateMustBeDefinedError;
-      return {
-        ...state,
-        library: addCardToCollection(action.card, state.library)
-      };
+      return addCardToLibrary(state, action);
+    case "addDeck":
+      return addDeck(state, action);
   }
 }
 
