@@ -16,7 +16,7 @@ const StyledAutocomplete = styled(AutoComplete)`
       border: 0;
       color: white;
     }
-    ,
+
     .ant-select-selection {
       background: ${lighten(0.1, styles.darkBg)};
       color: white;
